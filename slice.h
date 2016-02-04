@@ -14,6 +14,8 @@ namespace MatrixMan
     template <class T>
     class Slice
     {
+        friend class Matrix<T>;
+
         private:
             T** matrix;
             Matrix<T>* m;

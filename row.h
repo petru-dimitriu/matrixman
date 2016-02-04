@@ -11,6 +11,7 @@ namespace MatrixMan
     template <class T>
     class RowSlice
     {
+        friend class Matrix<T>;
 
         private:
             T* matrix;
@@ -62,6 +63,123 @@ namespace MatrixMan
                     return matrix[from_col];
                 }
                 return matrix[from_col+x];
+            }
+
+            RowSlice<T>& operator= (RowSlice<T>& X)
+            {
+                if (to_col - from_col != X.to_col - X.to_col)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] = X.get(x);
+                return *this;
+            }
+
+            RowSlice<T>& operator+= (RowSlice<T>& X)
+            {
+                if (to_col - from_col != X.to_col - X.to_col)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] += X.get(x);
+                return *this;
+            }
+
+            RowSlice<T>& operator-= (RowSlice<T>& X)
+            {
+                if (to_col - from_col != X.to_col - X.to_col)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] -= X.get(x);
+                return *this;
+            }
+
+            RowSlice<T>& operator= (Matrix<T>& X)
+            {
+                if (to_col - from_col +1 != X.cols || X.rows != 1)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] = X.get(1,x);
+                return *this;
+            }
+
+            RowSlice<T>& operator+= (Matrix<T>& X)
+            {
+                if (to_col - from_col + 1!= X.cols || X.rows != 1)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] += X.get(1,x);
+                return *this;
+            }
+
+            RowSlice<T>& operator-= (Matrix<T>& X)
+            {
+                if (to_col - from_col + 1!= X.cols || X.rows != 1)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] -= X.get(1,x);
+                return *this;
+            }
+
+            RowSlice<T>& operator= (Slice<T>& X)
+            {
+                if (to_col - from_col + 1 != X.cols || X.rows != 1)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] = X.get(1,x);
+                return *this;
+            }
+
+            RowSlice<T>& operator+= (Slice<T>& X)
+            {
+                if (to_col - from_col + 1!= X.cols || X.rows != 1)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] += X.get(1,x);
+                return *this;
+            }
+
+            RowSlice<T>& operator-= (Slice<T>& X)
+            {
+                if (to_col - from_col + 1!= X.cols || X.rows != 1)
+                {
+                    throw MMError("Row dimensions do not match.");
+                    return *this;
+                }
+                int i, x;
+                for (i=from_col, x=0;i<=to_col;i++,x++)
+                    matrix[i] -= X.get(1,x);
+                return *this;
             }
     };
 };

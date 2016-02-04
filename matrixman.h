@@ -52,6 +52,24 @@ namespace MatrixMan
                 fill (initialValue);
             }
 
+            Matrix(RowSlice<T>& X)
+            {
+                this->rows = 1;
+                this->cols = X.from_col-X.to_col+1;
+                allocate(rows,cols);
+                for (int i=0;i<cols;i++)
+                    matrix[0][i] = X.get(i);
+            }
+
+            Matrix(ColumnSlice<T>& X)
+            {
+                this->rows = X.to_row-X.from_row+1;
+                this->cols = 1;
+                allocate(rows,cols);
+                for (int i=0;i<rows;i++)
+                    matrix[i][0] = X.get(i);
+            }
+
             Matrix<T>& display()
             {
                 for (int i=0;i<rows;i++)

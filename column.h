@@ -11,6 +11,7 @@ namespace MatrixMan
     template <class T>
     class ColumnSlice
     {
+        friend class Matrix<T>;
 
         private:
             T** matrix;
@@ -59,7 +60,7 @@ namespace MatrixMan
 
             ColumnSlice<T>& operator= (ColumnSlice<T>& X)
             {
-                if (from_row-to_row != X.from_row-X.to_row)
+                if (to_row-from_row != X.to_row-X.from_row)
                 {
                     throw MMError("Column dimensions do not match.");
                     return *this;
@@ -72,7 +73,7 @@ namespace MatrixMan
 
             ColumnSlice<T>& operator+= (ColumnSlice<T>& X)
             {
-                if (from_row-to_row != X.from_row-X.to_row)
+                if (to_row-from_row != X.to_row-X.from_row)
                 {
                     throw MMError("Column dimensions do not match.");
                     return *this;
@@ -85,7 +86,7 @@ namespace MatrixMan
 
             ColumnSlice<T>& operator-= (ColumnSlice<T>& X)
             {
-                if (from_row-to_row != X.from_row-X.to_row)
+                if (to_row-from_row != X.to_row-X.from_row)
                 {
                     throw MMError("Column dimensions do not match.");
                     return *this;
@@ -98,7 +99,7 @@ namespace MatrixMan
 
             ColumnSlice<T>& operator= (Matrix<T>& X)
             {
-                if (from_row-to_row+1 != X.rows || X.cols != 1)
+                if (to_row-from_row+1 != X.rows || X.cols != 1)
                 {
                     throw MMError("Column and matrix dimensions do not match.");
                     return *this;
@@ -111,7 +112,7 @@ namespace MatrixMan
 
             ColumnSlice<T>& operator+= (Matrix<T>& X)
             {
-                if (from_row-to_row+1 != X.rows || X.cols != 1)
+                if (to_row-from_row+1 != X.rows || X.cols != 1)
                 {
                     throw MMError("Column and matrix dimensions do not match.");
                     return *this;
@@ -124,7 +125,7 @@ namespace MatrixMan
 
             ColumnSlice<T>& operator-= (Matrix<T>& X)
             {
-                if (from_row-to_row+1 != X.rows || X.cols != 1)
+                if (to_row-from_row+1 != X.rows || X.cols != 1)
                 {
                     throw MMError("Column and matrix dimensions do not match.");
                     return *this;

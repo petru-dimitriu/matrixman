@@ -23,9 +23,7 @@ int main()
     (A||8).display();
     */
     Matrix<double> X = eye(5);
-    X||2 = X || 4;
-    X||1 = 7;
-    X[2] = 5;
+    Matrix<double> Y = X||4;
     X.display();
 
     return 0;
