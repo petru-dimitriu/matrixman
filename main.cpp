@@ -6,8 +6,8 @@ using namespace MatrixMan;
 
 int main()
 {
-    Matrix<double> A(10,10,1);
-    Matrix<double> B(3,3,5);
+    Matrix<double> A(10,10,2);
+    /*Matrix<double> B(3,3,5);
     B[2][1] += 1;
     A[1].fill(2);
     A.slice(1,3,1,3) = B;
@@ -15,8 +15,12 @@ int main()
 
     A.display();
     std::cout << "--\n";
-    Matrix<double> C = A*2;
-    C = A/5;
+    Matrix<double> C = A*20;
+    C = C/5.2;
     C.display();
+    */
+    Matrix<double> a (10,1,5);
+    (A*a).display();
+
     return 0;
 }

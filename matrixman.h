@@ -25,7 +25,7 @@ namespace MatrixMan
             void allocate(int rows, int cols)
             {
                 matrix = new T*[rows];
-                for (int i=0;i<cols;i++)
+                for (int i=0;i<rows;i++)
                     matrix[i] = new T[cols];
             }
 
@@ -92,6 +92,8 @@ namespace MatrixMan
                         matrix[i][j] = m.matrix[i][j];
             }
 
+            /*** OPERATIONS WITH SCALARS ***/
+
             Matrix<T>& operator= (const T& t)
             {
                 int i, j;
@@ -100,19 +102,6 @@ namespace MatrixMan
                         matrix[i][j] = t;
             }
 
-            Matrix<T>& operator+ (const Matrix<T>& X)
-            {
-                Matrix<T>* A = new Matrix<T>(*this);
-                (*A) += X;
-                return *A;
-            }
-
-            Matrix<T>& operator- (const Matrix<T>& X)
-            {
-                Matrix<T>* A = new Matrix<T>(*this);
-                (*A) -= X;
-                return *A;
-            }
 
             Matrix<T>& operator+ (const T& t)
             {
@@ -178,6 +167,8 @@ namespace MatrixMan
                 return *this;
             }
 
+            /*** OPERATIONS WITH OTHER MATRICES ***/
+
             Matrix<T>& operator += (const Matrix<T>& X)
             {
                 if (X.rows != rows || X.cols != cols)
@@ -206,6 +197,7 @@ namespace MatrixMan
                 return *this;
             }
 
+
             Matrix<T>& operator = (const Matrix<T>& X)
             {
                 deallocate();
@@ -216,6 +208,45 @@ namespace MatrixMan
                 for (i=0;i<rows;i++)
                     for (j=0;j<cols;j++)
                         matrix[i][j] = X.matrix[i][j];
+                return *this;
+            }
+
+            Matrix<T>& operator+ (const Matrix<T>& X)
+            {
+                Matrix<T>* A = new Matrix<T>(*this);
+                (*A) += X;
+                return *A;
+            }
+
+            Matrix<T>& operator- (const Matrix<T>& X)
+            {
+                Matrix<T>* A = new Matrix<T>(*this);
+                (*A) -= X;
+                return *A;
+            }
+
+            Matrix<T>& operator* (const Matrix<T>& X)
+            {
+                Matrix<T>* A = new Matrix<T>(*this);
+                (*A) *= X;
+                return *A;
+            }
+
+            Matrix<T>& operator*= (const Matrix<T>& X)
+            {
+                if (cols != X.rows)
+                    throw new MMError ("Matrix dimensions do not match for multiplication.");
+                Matrix<T>* A = new Matrix<T>(rows,X.cols,0);
+                int i,j,k;
+                for (i=0;i<rows;i++)
+                    for (j=0;j<X.cols;j++)
+                    {
+                        for (k=0;k<cols;k++)
+                        {
+                            A->matrix[i][j] += matrix[i][k] * X.matrix[k][j];
+                        }
+                    }
+                *this = *A;
                 return *this;
             }
 
