@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "mmerror.h"
+#include "slice.h"
 
 namespace MatrixMan
 {
@@ -101,12 +102,12 @@ namespace MatrixMan
                 return *(new Slice<T>(m,fr+from_row,tr+from_row,fc+from_col,tc+from_col));
             }
 
+
             T& get(int x, int y)
             {
                 return matrix[from_row+x][from_col+x];
             }
 
-
-
     };
+
 };

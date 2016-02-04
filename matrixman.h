@@ -2,6 +2,7 @@
 #include "mmerror.h"
 #include "slice.h"
 #include "row.h"
+#include "column.h"
 #include <iostream>
 
 namespace MatrixMan
@@ -16,6 +17,7 @@ namespace MatrixMan
     class Matrix
     {
         friend class RowSlice<T>;
+        friend class ColumnSlice<T>;
         friend class Slice<T>;
 
         private:
@@ -74,6 +76,11 @@ namespace MatrixMan
             RowSlice<T>& operator[] (int x)
             {
                 return *(new RowSlice<T>(this,x,-1,-1));
+            }
+
+            ColumnSlice<T>& operator|| (int x)
+            {
+                return *(new ColumnSlice<T>(this,x,-1,-1));
             }
 
             Slice<T>& slice(int from_row, int to_row, int from_col, int to_col)
@@ -255,4 +262,18 @@ namespace MatrixMan
                 return matrix[x][y];
             }
     };
+
+    Matrix<double>& ones(int x, int y)
+    {
+        return *(new Matrix<double>(x,y,1));
+    }
+
+    Matrix<double>& eye(int x)
+    {
+        Matrix<double>* R = new Matrix<double> (x,x,0);
+        do
+            R->get(x-1,x-1) = 1;
+        while (--x);
+        return *R;
+    }
 };

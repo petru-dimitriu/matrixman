@@ -18,9 +18,15 @@ int main()
     Matrix<double> C = A*20;
     C = C/5.2;
     C.display();
+    A||4 = 5;
+    A||8 = 8;
+    (A||8).display();
     */
-    Matrix<double> a (10,1,5);
-    (A*a).display();
+    Matrix<double> X = eye(5);
+    X||2 = X || 4;
+    X||1 = 7;
+    X[2] = 5;
+    X.display();
 
     return 0;
 }
