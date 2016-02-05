@@ -23,8 +23,12 @@ int main()
     (A||8).display();
     */
     Matrix<double> X = eye(5);
-    Matrix<double> Y = X||4;
+    Matrix<double> Y = X||2;
+    X.slice(1,3,1,3).slice(1,1,1,2) += 5;
     X.display();
+    Y.display();
+    X[2].display();
+
 
     return 0;
 }
