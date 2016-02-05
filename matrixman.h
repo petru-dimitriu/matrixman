@@ -70,6 +70,17 @@ namespace MatrixMan
                     matrix[i][0] = X.get(i);
             }
 
+            Matrix(Slice<T>& X)
+            {
+                rows = X.rows;
+                cols = X.cols;
+                allocate(rows,cols);
+                int i, j;
+                for (i=0;i<rows;i++)
+                    for (j=0;j<cols;j++)
+                        matrix[i][j] = X.get(i,j);
+            }
+
             Matrix<T>& display()
             {
                 for (int i=0;i<rows;i++)
