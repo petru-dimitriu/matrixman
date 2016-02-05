@@ -18,7 +18,8 @@ A||5 = 7; // fills the entire 6th column with 7
 B = A*2; // multiplication with a scalar (+,-,*,/ available for scalars)
 C = A*B; // multiplication with a matrix (+,-,* available for matrices)
 A.slice(2,4,2,6) += D; // operates with a submatrix wthin A
+A[4][7] = -1; // access an element
 ```
 
-## Licence
+## License
 Use as you wish; credit me as you wish.

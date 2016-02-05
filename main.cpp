@@ -1,6 +1,4 @@
-#include "matrixman.h"
-#include "row.h"
-#include "slice.h"
+#include "lib/matrixman.h"
 #include <iostream>
 using namespace MatrixMan;
 
