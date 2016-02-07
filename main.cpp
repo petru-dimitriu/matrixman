@@ -18,7 +18,9 @@ int main()
     X.display();
 
     X[2].display();
-    (X||2). display();
+    (X||2).display();
+    (ones(5,5)*4).tril().display();
+    (ones(5,5)*3).triu().display();
 
     Matrix<double> Z = A.slice(3,7,3,7);
     return 0;

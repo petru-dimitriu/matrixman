@@ -19,6 +19,9 @@ B = A*2; // multiplication with a scalar (+,-,*,/ available for scalars)
 C = A*B; // multiplication with a matrix (+,-,* available for matrices)
 A.slice(2,4,2,6) += D; // operates with a submatrix wthin A
 A[4][7] = -1; // access an element
+A.tril().display(); // lower triangular part of matrix
+A.triu().display(); // upper triangular part of matrix
+Matrix M<double> = A.diagCol(); // gets a column containing the diagonal or pseudo-diagonal of the matrix
 ```
 
 ## License

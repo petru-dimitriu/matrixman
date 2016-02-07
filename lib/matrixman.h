@@ -286,7 +286,77 @@ namespace MatrixMan
                 return *this;
             }
 
-            T& get(int x, int y)
+            Matrix<T>& diag()
+            {
+                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0);
+                int x = std::min(rows, cols), i;
+                for (i=0;i<x;i++)
+                    newMatrix->matrix[i][i] = matrix[i][i];
+                return *newMatrix;
+            }
+
+            Matrix<T>& diagCol()
+            {
+                int x = std::min(rows, cols), i;
+                Matrix<T>* newMatrix = new Matrix<T>(x,1,0);
+                for (i=0;i<x;i++)
+                    newMatrix->matrix[i][0] = matrix[i][i];
+                return *newMatrix;
+            }
+
+            bool isDiag()
+            {
+                int i, j;
+                for (i=0;i<rows;i++)
+                    for (j=0;j<cols;j++)
+                        if (i!=j && matrix[i][j] != 0)
+                            return false;
+                return true;
+            }
+
+            Matrix<T>& tril()
+            {
+                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0);
+                int x = std::min(rows, cols), i, j;
+                for (i=0;i<x;i++)
+                    for (j=0;j<=i;j++)
+                        newMatrix->matrix[i][j] = get(i,j);
+                return *newMatrix;
+            }
+
+            bool isTril()
+            {
+                int i, j;
+                int x = std::min(rows, cols);
+                for (i=0;i<x;i++)
+                    for (j=i+1;j<cols;j++)
+                        if (i!=j && matrix[i][j] != 0)
+                            return false;
+                return true;
+            }
+
+            Matrix<T>& triu()
+            {
+                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0);
+                int x = std::min(rows, cols), i, j;
+                for (i=0;i<x;i++)
+                    for (j=i;j<cols;j++)
+                        newMatrix->matrix[i][j] = get(i,j);
+                return *newMatrix;
+            }
+
+            bool isTriu()
+            {
+                int i, j;
+                int x = std::min(rows, cols);
+                for (i=0;i<x;i++)
+                    for (j=0;j<i;j++)
+                        if (i!=j && matrix[i][j] != 0)
+                            return false;
+                return true;
+            }
+
+            inline T& get(int x, int y)
             {
                 return matrix[x][y];
             }
