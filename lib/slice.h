@@ -23,7 +23,11 @@ namespace MatrixMan
             int from_row, from_col, to_row, to_col;
 
         public:
-            Slice();
+            Slice()
+            {
+                this->rows = 0;
+                this->cols = 0;
+            }
 
             Slice(Matrix<T>* m, int from_row, int to_row, int from_col, int to_col)
             {
@@ -84,10 +88,10 @@ namespace MatrixMan
                 return fill(what);
             }
 
-            RowSlice<T>& operator[] (int x)
+            /*RowSlice<T>& operator[] (int x)
             {
                 get(x);
-            }
+            }*/
 
             /*** OPERATIONS WITH SCALARS ***/
 
@@ -105,9 +109,9 @@ namespace MatrixMan
                 return *A;
             }
 
-            Slice<T>& operator* (const T& t)
+            Matrix<T>& operator* (const T& t)
             {
-                Slice<T>* A = new Slice<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this);
                 (*A) *= t;
                 return *A;
             }
@@ -196,8 +200,8 @@ namespace MatrixMan
 
             Slice<T>& operator-= (Matrix<T> &X)
             {
-                if (X.rows != (to_row - from_row + 1) ||
-                    X.cols != (to_col - from_col + 1))
+                if (X.rows != rows ||
+                    X.cols != cols)
                     {
                         std::cout << from_row << " " << X.cols << "\n";
                         throw MMError("Matrix dimensions do not match.");
@@ -231,9 +235,9 @@ namespace MatrixMan
                 return *A;
             }
 
-            Slice<T>& operator* (const Matrix<T>& X)
+            Matrix<T>& operator* (const Matrix<T>& X)
             {
-                Slice<T>* A = new Slice<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this);
                 (*A) *= X;
                 return *A;
             }
@@ -336,17 +340,17 @@ namespace MatrixMan
                 return *A;
             }
 
-            Slice<T>& operator* (const Slice<T>& X)
+            Matrix<T>& operator* (const Slice<T>& X)
             {
-                Slice<T>* A = new Slice<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this);
                 (*A) *= X;
                 return *A;
             }
 
             Slice<T>& operator= (Slice<T> &X)
             {
-                if (X.rows != (to_row - from_row + 1) ||
-                    X.cols != (to_col - from_col + 1))
+                if (X.rows != rows ||
+                    X.cols != cols )
                     {
                         std::cout << from_row << " " << X.cols << "\n";
                         throw MMError("Matrix dimensions do not match.");
@@ -357,7 +361,7 @@ namespace MatrixMan
                 int i, j;
                 for (i=0;i<X.rows;i++)
                     for (j=0;j<X.cols;j++)
-                        buffer[(i*X.cols)+j] = X[i][j];
+                        buffer[(i*X.cols)+j] = X.get(i,j);
 
                 for (i=0;i<X.rows;i++)
                     for (j=0;j<X.cols;j++)
@@ -371,6 +375,8 @@ namespace MatrixMan
                 // TO DO: Error check
                 return *(new Slice<T>(m,fr+from_row,tr+from_row,fc+from_col,tc+from_col));
             }
+
+
 
             /** DIAGONALS **/
             Matrix<T>& diag()
@@ -437,16 +443,16 @@ namespace MatrixMan
                 int i, j;
                 int x = std::min(rows, cols);
                 for (i=0;i<x;i++)
-                    for (j=0;j<i;j++)
+                    for (j=0;j<=i;j++)
                         if (i!=j && matrix[i][j] != 0)
                             return false;
                 return true;
             }
 
 
-            inline T& get(int x, int y)
+            inline T& get(int x, int y) const
             {
-                return matrix[from_row+x][from_col+x];
+                return matrix[from_row+x][from_col+y];
             }
 
     };

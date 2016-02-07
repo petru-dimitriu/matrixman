@@ -42,6 +42,8 @@ namespace MatrixMan
             Matrix()
             {
                 matrix = NULL;
+                this->rows = 0;
+                this->cols = 0;
             }
 
             Matrix(int rows, int cols, T initialValue)
@@ -286,6 +288,24 @@ namespace MatrixMan
                 return *this;
             }
 
+            Matrix<T>& operator*= (const Slice<T>& X)
+            {
+                if (cols != X.rows)
+                    throw new MMError ("Matrix dimensions do not match for multiplication.");
+                Matrix<T>* A = new Matrix<T>(rows,X.cols,0);
+                int i,j,k;
+                for (i=0;i<rows;i++)
+                    for (j=0;j<X.cols;j++)
+                    {
+                        for (k=0;k<cols;k++)
+                        {
+                            A->matrix[i][j] += matrix[i][k] * X.get(k,j);
+                        }
+                    }
+                *this = *A;
+                return *this;
+            }
+
             Matrix<T>& diag()
             {
                 Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0);
@@ -356,7 +376,7 @@ namespace MatrixMan
                 return true;
             }
 
-            inline T& get(int x, int y)
+            inline T& get(int x, int y) const
             {
                 return matrix[x][y];
             }

@@ -44,7 +44,7 @@ namespace MatrixMan
                     matrix[i] = what;
             }
 
-            T& operator[] (int x)
+            inline T& operator[] (int x)
             {
                 return get(x);
             }

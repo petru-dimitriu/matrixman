@@ -1,5 +1,7 @@
 #include "lib/matrixman.h"
 #include <iostream>
+#include <cmath>
+#define EPS 0.0000000001
 using namespace MatrixMan;
 
 int main()
