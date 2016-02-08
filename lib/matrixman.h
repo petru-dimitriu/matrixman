@@ -4,6 +4,7 @@
 #include "row.h"
 #include "column.h"
 #include <iostream>
+#include <algorithm>
 
 namespace MatrixMan
 {
@@ -114,7 +115,7 @@ namespace MatrixMan
                 return *(new ColumnSlice<T>(this,x,-1,-1));
             }
 
-            Slice<T>& slice(int from_row, int to_row, int from_col, int to_col)
+            Slice<T>& sub(int from_row, int to_row, int from_col, int to_col)// -------------------------------------------------------------- FUNCTIE SLICE
             {
                 return *(new Slice<T>(this,from_row,to_row,from_col,to_col));
             }

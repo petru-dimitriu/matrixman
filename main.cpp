@@ -9,7 +9,7 @@ int main()
     Matrix<double> A(10,10,2);
     Matrix<double> X = eye(10);
 
-    X.slice(1,3,1,3) += 5;
+    X.sub(1,3,1,3) += 5;
     A[5][3] = 7;
     A[0][0] = -1;
     A[5][1] = -4;
@@ -24,6 +24,6 @@ int main()
     (ones(5,5)*4).tril().display();
     (ones(5,5)*3).triu().display();
 
-    Matrix<double> Z = A.slice(3,7,3,7);
+    Matrix<double> Z = A.sub(3,7,3,7);
     return 0;
 }
