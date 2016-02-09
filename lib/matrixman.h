@@ -115,7 +115,7 @@ namespace MatrixMan
                 return *(new ColumnSlice<T>(this,x,-1,-1));
             }
 
-            Slice<T>& sub(int from_row, int to_row, int from_col, int to_col)// -------------------------------------------------------------- FUNCTIE SLICE
+            Slice<T>& sub(int from_row, int to_row, int from_col, int to_col)
             {
                 return *(new Slice<T>(this,from_row,to_row,from_col,to_col));
             }
@@ -381,8 +381,31 @@ namespace MatrixMan
             {
                 return matrix[x][y];
             }
-    };
 
+			// ---------------------------------------------------------------------------------------
+
+			Matrix<T>& transpose()
+			{
+				Matrix<T>* newMatrix = new Matrix<T>(cols, rows, 0);
+				for (int i = 0; i < rows; ++i)
+					for (int j = 0; j < cols; ++j)
+						newMatrix->matrix[j][i] = get(i,j);
+				return *newMatrix;
+			}
+
+			Matrix<T>& zeroIfLowerThan(long double eps = 0.0000000001){
+				eps = std::fabs(eps);
+
+				Matrix<T>* newMatrix = new Matrix<T>(rows, cols, 0);
+				for (int i = 0; i < rows; ++i)
+					for (int j = 0; j < cols; ++j)
+						newMatrix->matrix[i][j] = (std::fabs(get(i, j)) > eps) ? get(i, j) : 0;
+				return *newMatrix;
+			}
+
+
+    };
+	
     Matrix<double>& ones(int x, int y)
     {
         return *(new Matrix<double>(x,y,1));

@@ -370,7 +370,7 @@ namespace MatrixMan
                 delete[] buffer;
             }
 
-            Slice<T>& sub(int fr, int tr, int fc, int tc)// --------------------------------------------------------------------------------- FUNCTIE SLICE
+            Slice<T>& sub(int fr, int tr, int fc, int tc)
             {
                 // TO DO: Error check
                 return *(new Slice<T>(m,fr+from_row,tr+from_row,fc+from_col,tc+from_col));

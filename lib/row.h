@@ -8,10 +8,14 @@ namespace MatrixMan
     template <class T>
     class Slice;
 
+	template <class T>
+	class ColumnSlice;
+
     template <class T>
     class RowSlice
     {
         friend class Matrix<T>;
+		friend class ColumnSlice <T>;
 
         private:
             T* matrix;
@@ -181,5 +185,24 @@ namespace MatrixMan
                     matrix[i] -= X.get(1,x);
                 return *this;
             }
+
+			// ---------------------------------------------------------------------------------------
+
+			T operator*(ColumnSlice<T>& X){
+				if (this->to_col - this->from_col != X.to_row - X.from_row){
+					throw MMError("Row / Column dimensions do not match.");
+					return -1;
+				}
+
+				T sum = 0;
+				for (int i = this->from_col, j = X.from_row; i <= this->to_col; ++i, ++j){
+					sum += (this->matrix[i] * X.get(j));
+				}
+
+				return sum;
+
+			}
+
+
     };
 };
