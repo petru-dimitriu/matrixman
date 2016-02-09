@@ -105,6 +105,11 @@ namespace MatrixMan
             }
 
 
+			Matrix<T>& operator~()
+			{
+				return transpose();
+			}
+
             RowSlice<T>& operator[] (int x)
             {
                 return *(new RowSlice<T>(this,x,-1,-1));
@@ -393,7 +398,8 @@ namespace MatrixMan
 				return *newMatrix;
 			}
 
-			Matrix<T>& zeroIfLowerThan(long double eps = 0.0000000001){
+			Matrix<T>& zeroIfLowerThan(long double eps = 0.0000000001)
+			{
 				eps = std::fabs(eps);
 
 				Matrix<T>* newMatrix = new Matrix<T>(rows, cols, 0);
@@ -402,10 +408,9 @@ namespace MatrixMan
 						newMatrix->matrix[i][j] = (std::fabs(get(i, j)) > eps) ? get(i, j) : 0;
 				return *newMatrix;
 			}
-
-
     };
 	
+
     Matrix<double>& ones(int x, int y)
     {
         return *(new Matrix<double>(x,y,1));

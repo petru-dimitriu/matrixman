@@ -24,10 +24,8 @@ int main()
     X[3][8] = 11;
     X[2][4] = -2;
     X[9][9] = 3;
-
-	D.transpose().display();
+	(~D).display();
 	D.zeroIfLowerThan(0.00001).display();
-	Matrix<double> C = D.transpose();
 
     X.display();
 
