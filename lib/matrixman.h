@@ -304,6 +304,58 @@ namespace MatrixMan
                 return *this;
             }
 
+            Matrix<T>& strassenMultiply(Matrix<T>& X)
+            {
+                if (cols != X.cols || cols != rows || rows != X.rows)
+                    throw new MMError ("Matrix dimensions do not match for multiplication.");
+                if (cols == 2)
+                {
+                    Matrix<T>* newMatrix = new Matrix<T>(2,2,0);
+                    T m[7];
+                    m[0] = (matrix[0][1] - matrix[1][1])*(X.matrix[1][0]+X.matrix[1][1]);
+                    m[1] = (matrix[0][0] + matrix[1][1])*(X.matrix[0][0]+X.matrix[1][1]);
+                    m[2] = (matrix[0][0] - matrix[1][0])*(X.matrix[0][0]+X.matrix[0][1]);
+                    m[3] = (matrix[0][0] + matrix[0][1])*X.matrix[1][1];
+                    m[4] = matrix[0][0] * (X.matrix[0][1] - X.matrix[1][1]);
+                    m[5] = matrix[1][1] * (X.matrix[1][0] - X.matrix[0][0]);
+                    m[6] = (matrix[1][0]+matrix[1][1])*X.matrix[0][0];
+                    newMatrix->get(0,0) = m[0] + m[1] - m[3] + m[5];
+                    newMatrix->get(0,1) = m[3] + m[4];
+                    newMatrix->get(1,0) = m[5] + m[6];
+                    newMatrix->get(1,1) = m[1] - m[2] + m[4] - m[6];
+                    return *newMatrix;
+                }
+                else
+                {
+                    Matrix<T>* C = new Matrix<T>(rows,cols,0);
+                    Matrix<T> A11 = sub(0,rows/2-1,0,cols/2-1);
+                    Matrix<T> A12 = sub(0,rows/2-1,cols/2,cols-1);
+                    Matrix<T> A21 = sub(rows/2,rows-1,0,cols/2-1);
+                    Matrix<T> A22 = sub(rows/2,rows-1,cols/2,cols-1);
+
+                    Matrix<T> B11 = X.sub(0,rows/2-1,0,cols/2-1);
+                    Matrix<T> B12 = X.sub(0,rows/2-1,cols/2,cols-1);
+                    Matrix<T> B21 = X.sub(rows/2,rows-1,0,cols/2-1);
+                    Matrix<T> B22 = X.sub(rows/2,rows-1,cols/2,cols-1);
+
+                    Matrix<T> M1, M2, M3, M4, M5, M6, M7;
+                    M1 = (A12 - A22).strassenMultiply(B21 + B22);
+                    M2 = (A11 + A22).strassenMultiply(B11 + B22);
+                    M3 = (A11 - A21).strassenMultiply(B11 + B12);
+                    M4 = (A11 + A12).strassenMultiply(B22);
+                    M5 = A11.strassenMultiply(B12 - B22);
+                    M6 = A22.strassenMultiply(B21 - B11);
+                    M7 = (A21 + A22).strassenMultiply(B11);
+
+                    C->sub(0,rows/2-1,0,cols/2-1) = M1 + M2 - M4 + M6;
+                    C->sub(0,rows/2-1,cols/2,cols-1) = M4 + M5;
+                    C->sub(rows/2,rows-1,0,cols/2-1) = M6 + M7;
+                    C->sub(rows/2,rows-1,cols/2,cols-1) = M2 - M3 + M5 - M7;
+
+                    return *C;
+                }
+            }
+
             Matrix<T>& operator*= (const Slice<T>& X)
             {
                 if (cols != X.rows)

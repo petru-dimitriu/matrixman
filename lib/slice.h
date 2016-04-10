@@ -29,7 +29,7 @@ namespace MatrixMan
                 this->cols = 0;
             }
 
-            Slice(Matrix<T>* m, int from_row, int to_row, int from_col, int to_col)
+            Slice(Matrix<T> *m , int from_row, int to_row, int from_col, int to_col)
             {
 
                 if (from_row < -1 || from_col < -1 ||

@@ -39,8 +39,19 @@ int main()
 	RowSlice<double> RS(&D.transpose(), 0, 0, 5);
 	ColumnSlice<double> CS(&D, 0, 0, 5);
 
-	std::cout << RS*CS << "\n";
+	std::cout << RS*CS << "\n\n";
 	(CS*RS).display();
+
+    Matrix<double> M1 (4,4,2);
+    Matrix<double> M2 (4,4,4);
+    M1.display();
+    M1[2][3] = 7;
+    M1[0][1] = -2;
+    M1[3][0] = 5;
+    M2.display();
+    (M1*M2).display();
+    std::cout << "\n";
+    (M1.strassenMultiply(M2)).display();
 
     return 0;
 }
