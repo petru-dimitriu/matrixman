@@ -5,6 +5,7 @@
 #include "column.h"
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 namespace MatrixMan
 {
@@ -50,6 +51,7 @@ namespace MatrixMan
             Matrix(int rows, int cols, T initialValue)
             {
                 allocate(rows,cols);
+
                 this->rows = rows;
                 this->cols = cols;
                 fill (initialValue);
@@ -134,6 +136,14 @@ namespace MatrixMan
                 for (i=0;i<m.rows;i++)
                     for (j=0;j<m.cols;j++)
                         matrix[i][j] = m.matrix[i][j];
+            }
+
+            Matrix (const ColumnSlice<T>& m)
+            {
+                rows = m.to_row - m.from_row + 1;
+                allocate(rows,1);
+                for (int i=0;i<rows;i++)
+                    matrix[i][0] = m.matrix[i][m.mat_col];
             }
 
             /*** OPERATIONS WITH SCALARS ***/
@@ -409,7 +419,7 @@ namespace MatrixMan
 				return *newMatrix;
 			}
     };
-	
+
 
     Matrix<double>& ones(int x, int y)
     {

@@ -152,12 +152,12 @@ namespace MatrixMan
 
 			// ---------------------------------------------------------------------------------------
 
-			Matrix<T>& operator*(RowSlice<T>& X)
-			{
+            Matrix<T>& operator*(RowSlice<T>& X)
+            {
 				if (to_row - from_row != X.to_col - X.from_col)
 				{
 					throw MMError("Row / Column dimensions do not match.");
-					return Matrix<double>();
+					return *(new Matrix<T>(*this));
 				}
 
 				Matrix<T>* newMatrix = new Matrix<T>(to_row - from_row + 1, X.to_col - X.from_col + 1, 0);
