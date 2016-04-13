@@ -1,5 +1,6 @@
 bin/
 obj/
+test/
 *.depend
 *.cbp
 *.layout

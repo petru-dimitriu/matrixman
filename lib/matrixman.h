@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 namespace MatrixMan
 {
@@ -25,6 +26,7 @@ namespace MatrixMan
         private:
             T** matrix;
             int rows, cols;
+            static std::vector<Matrix<T>*> dyn;
 
             void allocate(int rows, int cols)
             {
@@ -41,6 +43,16 @@ namespace MatrixMan
             }
 
         public:
+
+            static void collectGarbage()
+            {
+                while (dyn.size() != 0)
+                {
+                    delete dyn.at(0);
+                    dyn.erase(dyn.begin());
+                }
+            }
+
             Matrix()
             {
                 matrix = NULL;
@@ -48,42 +60,58 @@ namespace MatrixMan
                 this->cols = 0;
             }
 
-            Matrix(int rows, int cols, T initialValue)
+            Matrix(int rows, int cols, T initialValue, bool dynamic = 0)
             {
                 allocate(rows,cols);
-
                 this->rows = rows;
                 this->cols = cols;
                 fill (initialValue);
+
+                if (dynamic)
+                    dyn.push_back(this);
             }
 
-            Matrix(RowSlice<T>& X)
+            Matrix(RowSlice<T>& X, bool dynamic = 0)
             {
                 this->rows = 1;
                 this->cols = X.from_col-X.to_col+1;
                 allocate(rows,cols);
                 for (int i=0;i<cols;i++)
                     matrix[0][i] = X.get(i);
+                if (dynamic)
+                    dyn.push_back(this);
             }
 
-            Matrix(ColumnSlice<T>& X)
+            Matrix(ColumnSlice<T>& X, bool dynamic = 0)
             {
                 this->rows = X.to_row-X.from_row+1;
                 this->cols = 1;
+                this->dynamic = dynamic;
                 allocate(rows,cols);
                 for (int i=0;i<rows;i++)
                     matrix[i][0] = X.get(i);
+                if (dynamic)
+                    dyn.push_back(this);
             }
 
-            Matrix(Slice<T>& X)
+            Matrix(Slice<T>& X, bool dynamic = 0)
             {
                 rows = X.rows;
                 cols = X.cols;
+                this->dynamic = dynamic;
                 allocate(rows,cols);
                 int i, j;
                 for (i=0;i<rows;i++)
                     for (j=0;j<cols;j++)
                         matrix[i][j] = X.get(i,j);
+                if (dynamic)
+                    dyn.push_back(this);
+            }
+
+            ~Matrix()
+            {
+                //std::cout << "Dealocate!!\n";
+                deallocate();
             }
 
             Matrix<T>& display()
@@ -114,12 +142,12 @@ namespace MatrixMan
 
             RowSlice<T>& operator[] (int x)
             {
-                return *(new RowSlice<T>(this,x,-1,-1));
+                return *(new RowSlice<T>(this,x,-1,-1,1));
             }
 
             ColumnSlice<T>& operator|| (int x)
             {
-                return *(new ColumnSlice<T>(this,x,-1,-1));
+                return *(new ColumnSlice<T>(this,x,-1,-1,1));
             }
 
             Slice<T>& sub(int from_row, int to_row, int from_col, int to_col)
@@ -127,7 +155,7 @@ namespace MatrixMan
                 return *(new Slice<T>(this,from_row,to_row,from_col,to_col));
             }
 
-            Matrix (const Matrix<T>& m)
+            Matrix (const Matrix<T>& m, bool dynamic = 0)
             {
                 rows = m.rows;
                 cols = m.cols;
@@ -136,6 +164,8 @@ namespace MatrixMan
                 for (i=0;i<m.rows;i++)
                     for (j=0;j<m.cols;j++)
                         matrix[i][j] = m.matrix[i][j];
+                if (dynamic)
+                    dyn.push_back(this);
             }
 
             Matrix (const ColumnSlice<T>& m)
@@ -154,33 +184,34 @@ namespace MatrixMan
                 for (i=0;i<rows;i++)
                     for (j=0;j<cols;j++)
                         matrix[i][j] = t;
+                collectGarbage();
             }
 
 
             Matrix<T>& operator+ (const T& t)
             {
-                Matrix<T>* A = new Matrix<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this,1);
                 (*A) += t;
                 return *A;
             }
 
             Matrix<T>& operator- (const T& t)
             {
-                Matrix<T>* A = new Matrix<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this,1);
                 (*A) -= t;
                 return *A;
             }
 
             Matrix<T>& operator* (const T& t)
             {
-                Matrix<T>* A = new Matrix<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this,1);
                 (*A) *= t;
                 return *A;
             }
 
             Matrix<T>& operator/ (const T& t)
             {
-                Matrix<T>* A = new Matrix<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this,1);
                 (*A) /= t;
                 return *A;
             }
@@ -262,26 +293,27 @@ namespace MatrixMan
                 for (i=0;i<rows;i++)
                     for (j=0;j<cols;j++)
                         matrix[i][j] = X.matrix[i][j];
+                collectGarbage();
                 return *this;
             }
 
             Matrix<T>& operator+ (const Matrix<T>& X)
             {
-                Matrix<T>* A = new Matrix<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this,1);
                 (*A) += X;
                 return *A;
             }
 
             Matrix<T>& operator- (const Matrix<T>& X)
             {
-                Matrix<T>* A = new Matrix<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this,1);
                 (*A) -= X;
                 return *A;
             }
 
             Matrix<T>& operator* (const Matrix<T>& X)
             {
-                Matrix<T>* A = new Matrix<T>(*this);
+                Matrix<T>* A = new Matrix<T>(*this,1);
                 (*A) *= X;
                 return *A;
             }
@@ -310,7 +342,7 @@ namespace MatrixMan
                     throw new MMError ("Matrix dimensions do not match for multiplication.");
                 if (cols == 2)
                 {
-                    Matrix<T>* newMatrix = new Matrix<T>(2,2,0);
+                    Matrix<T>* newMatrix = new Matrix<T>(2,2,0,1);
                     T m[7];
                     m[0] = (matrix[0][1] - matrix[1][1])*(X.matrix[1][0]+X.matrix[1][1]);
                     m[1] = (matrix[0][0] + matrix[1][1])*(X.matrix[0][0]+X.matrix[1][1]);
@@ -360,7 +392,7 @@ namespace MatrixMan
             {
                 if (cols != X.rows)
                     throw new MMError ("Matrix dimensions do not match for multiplication.");
-                Matrix<T>* A = new Matrix<T>(rows,X.cols,0);
+                Matrix<T>* A = new Matrix<T>(rows,X.cols,0,1);
                 int i,j,k;
                 for (i=0;i<rows;i++)
                     for (j=0;j<X.cols;j++)
@@ -376,7 +408,7 @@ namespace MatrixMan
 
             Matrix<T>& diag()
             {
-                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0);
+                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0,1);
                 int x = std::min(rows, cols), i;
                 for (i=0;i<x;i++)
                     newMatrix->matrix[i][i] = matrix[i][i];
@@ -386,7 +418,7 @@ namespace MatrixMan
             Matrix<T>& diagCol()
             {
                 int x = std::min(rows, cols), i;
-                Matrix<T>* newMatrix = new Matrix<T>(x,1,0);
+                Matrix<T>* newMatrix = new Matrix<T>(x,1,0,1);
                 for (i=0;i<x;i++)
                     newMatrix->matrix[i][0] = matrix[i][i];
                 return *newMatrix;
@@ -404,7 +436,7 @@ namespace MatrixMan
 
             Matrix<T>& tril()
             {
-                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0);
+                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0,1);
                 int x = std::min(rows, cols), i, j;
                 for (i=0;i<x;i++)
                     for (j=0;j<=i;j++)
@@ -425,7 +457,7 @@ namespace MatrixMan
 
             Matrix<T>& triu()
             {
-                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0);
+                Matrix<T>* newMatrix = new Matrix<T>(rows,cols,0,1);
                 int x = std::min(rows, cols), i, j;
                 for (i=0;i<x;i++)
                     for (j=i;j<cols;j++)
@@ -453,7 +485,7 @@ namespace MatrixMan
 
 			Matrix<T>& transpose()
 			{
-				Matrix<T>* newMatrix = new Matrix<T>(cols, rows, 0);
+				Matrix<T>* newMatrix = new Matrix<T>(cols, rows, 0,1);
 				for (int i = 0; i < rows; ++i)
 					for (int j = 0; j < cols; ++j)
 						newMatrix->matrix[j][i] = get(i,j);
@@ -464,7 +496,7 @@ namespace MatrixMan
 			{
 				eps = std::fabs(eps);
 
-				Matrix<T>* newMatrix = new Matrix<T>(rows, cols, 0);
+				Matrix<T>* newMatrix = new Matrix<T>(rows, cols, 0,1);
 				for (int i = 0; i < rows; ++i)
 					for (int j = 0; j < cols; ++j)
 						newMatrix->matrix[i][j] = (std::fabs(get(i, j)) > eps) ? get(i, j) : 0;
@@ -475,12 +507,12 @@ namespace MatrixMan
 
     Matrix<double>& ones(int x, int y)
     {
-        return *(new Matrix<double>(x,y,1));
+        return *(new Matrix<double>(x,y,1,1));
     }
 
     Matrix<double>& eye(int x)
     {
-        Matrix<double>* R = new Matrix<double> (x,x,0);
+        Matrix<double>* R = new Matrix<double> (x,x,0,1);
         do
             R->get(x-1,x-1) = 1;
         while (--x);
